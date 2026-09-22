@@ -30,7 +30,25 @@ python scripts/download_data.py --force
 Output: per-ticker row counts, date range, missing-column warnings printed
 to the console, plus a summary written to `reports/phase1_data.md`.
 
+## Run — Phase 2 (cleaning)
+
+```bash
+python scripts/clean_data.py
+```
+
+Reads the cached CSVs from `data/`, drops `Adj Close`, sorts by date,
+drops exact duplicate dates and any row missing Open/High/Low/Close, and
+prints a QA summary (rows before/after, date range, gaps longer than 4
+calendar days). Writes `reports/phase2_clean.md`. Never re-downloads —
+run Phase 1's script first if `data/` is empty.
+
+Schema check:
+
+```bash
+python tests/test_preprocess.py
+```
+
 ## Out of scope (this phase)
 
-Cleaning beyond flattening yfinance's column headers, feature engineering,
-models, API. See `CONTEXT.md`.
+Feature engineering, indicators, target variable, models, API. See
+`CONTEXT.md`.

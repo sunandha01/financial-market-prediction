@@ -18,9 +18,9 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 1
-PHASE_NAME    = Data collection
-STATUS        = not started
+CURRENT_PHASE = 2
+PHASE_NAME    = Cleaning and preprocessing
+STATUS        = built, awaiting review
 ```
 
 When a phase is finished and the human says to move on, update these three lines.
