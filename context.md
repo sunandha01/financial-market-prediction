@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 2
-PHASE_NAME    = Cleaning and preprocessing
+CURRENT_PHASE = 3
+PHASE_NAME    = Feature engineering + target
 STATUS        = built, awaiting review
 ```
 
