@@ -89,3 +89,11 @@ def build_dataset(ticker: str) -> pd.DataFrame:
 
     df = df.dropna().reset_index(drop=True)
     return df
+
+
+def build_features(ticker: str) -> pd.DataFrame:
+    """Same features as build_dataset, for inference: no target, so the last
+    HORIZON sessions are kept. Only indicator-warmup rows are dropped."""
+    df = _add_features(load_clean(ticker))
+    feature_cols = [c for c in df.columns if c not in NON_FEATURE_COLUMNS]
+    return df.dropna(subset=feature_cols).reset_index(drop=True)

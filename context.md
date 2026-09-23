@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 5
-PHASE_NAME    = Model selection + artefacts
+CURRENT_PHASE = 6
+PHASE_NAME    = Inference function
 STATUS        = built, awaiting review
 ```
 

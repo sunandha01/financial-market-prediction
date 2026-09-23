@@ -98,6 +98,30 @@ writes `artifacts/metrics_summary.csv`, feature importance for tree winners,
 and `reports/phase5_selection.md`, which prints each winner next to the
 naive baselines. Check the report: most winners do not beat the baselines.
 
+## Run — Phase 6 (inference)
+
+Needs the Phase 5 artefacts (`artifacts/models/`, `artifacts/metrics_summary.csv`)
+and the `data/` cache. Never downloads, refits or runs CV.
+
+```bash
+python -m src.predict GC=F
+python -m src.predict GC=F --as-of 2026-06-30
+```
+
+Prints one JSON object (ticker, as_of, pred_return_7d, direction,
+model_name, model_path, last_close, beats_baseline_rmse,
+beats_baseline_direction). `as_of` is the date of the feature row used
+(last row on or before `--as-of`). Same inputs give identical output.
+`beats_baseline_*` come from `metrics_summary.csv`: today every winner
+loses to the mean baseline on RMSE. Forecasts are experimental, not advice;
+`--as-of` dates inside the training period are in-sample.
+
+Checks:
+
+```bash
+python tests/test_predict.py
+```
+
 ## Out of scope (this phase)
 
-`predict()`, database, API, UI. See `CONTEXT.md`.
+Database, jobs, API, UI. See `CONTEXT.md`.
