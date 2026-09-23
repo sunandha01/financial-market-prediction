@@ -25,3 +25,15 @@ def plot_last_fold(ticker: str, preds: pd.DataFrame) -> None:
     PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(PLOTS_DIR / f"{ticker.replace('=', '_')}_last_fold.png", dpi=110)
     plt.close(fig)
+
+
+def plot_importance(ticker: str, model_name: str, importance: pd.DataFrame, top: int = 15) -> None:
+    """importance: feature, importance columns, sorted descending (tree winners only)."""
+    top_rows = importance.head(top).iloc[::-1]
+    fig, ax = plt.subplots(figsize=(8, 0.35 * len(top_rows) + 1.2))
+    ax.barh(top_rows["feature"], top_rows["importance"])
+    ax.set_title(f"{ticker} — {model_name} feature importance (top {len(top_rows)})")
+    fig.tight_layout()
+    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(PLOTS_DIR / f"{ticker.replace('=', '_')}_{model_name}_importance.png", dpi=110)
+    plt.close(fig)
