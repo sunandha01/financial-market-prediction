@@ -83,6 +83,21 @@ sign). Writes `artifacts/metrics_cv.csv` (fold-level), plots under
 `artifacts/plots/`, and `reports/phase4_cv.md`. Hyperparameters and the CV
 gap live in `config.py`.
 
+## Run — Phase 5 (model selection + artefacts)
+
+Needs `artifacts/metrics_cv.csv` from Phase 4.
+
+```bash
+python scripts/select_models.py
+```
+
+Picks one winner per asset (highest mean directional accuracy across the
+folds among the five ML models; tie -> lower mean RMSE), refits it on all
+labelled rows and saves `artifacts/models/{ticker}_{model}.joblib`. Also
+writes `artifacts/metrics_summary.csv`, feature importance for tree winners,
+and `reports/phase5_selection.md`, which prints each winner next to the
+naive baselines. Check the report: most winners do not beat the baselines.
+
 ## Out of scope (this phase)
 
-Picking a winner / saving models, `predict()`, API. See `CONTEXT.md`.
+`predict()`, database, API, UI. See `CONTEXT.md`.

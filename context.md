@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 4
-PHASE_NAME    = Models + walk-forward validation
+CURRENT_PHASE = 5
+PHASE_NAME    = Model selection + artefacts
 STATUS        = built, awaiting review
 ```
 
