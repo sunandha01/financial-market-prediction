@@ -48,7 +48,23 @@ Schema check:
 python tests/test_preprocess.py
 ```
 
+## Run — Phase 3 (feature engineering + target)
+
+```bash
+python scripts/build_features.py
+```
+
+Starts from `load_clean(ticker)` (Phase 2) and builds features + the
+`target_ret_7d` label via `build_dataset(ticker)`. Prints shape per
+ticker and writes `reports/phase3_features.md` (every column name, row
+counts before/after warmup+target drop).
+
+Leakage check:
+
+```bash
+python tests/test_no_leakage.py
+```
+
 ## Out of scope (this phase)
 
-Feature engineering, indicators, target variable, models, API. See
-`CONTEXT.md`.
+Models, walk-forward validation, API. See `CONTEXT.md`.
