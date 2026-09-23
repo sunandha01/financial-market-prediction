@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 4
-PHASE_NAME    = Models + walk-forward validation
+CURRENT_PHASE = 6
+PHASE_NAME    = Inference function
 STATUS        = built, awaiting review
 ```
 
