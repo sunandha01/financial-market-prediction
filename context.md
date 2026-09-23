@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 3
-PHASE_NAME    = Feature engineering + target
+CURRENT_PHASE = 4
+PHASE_NAME    = Models + walk-forward validation
 STATUS        = built, awaiting review
 ```
 

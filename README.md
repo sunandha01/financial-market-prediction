@@ -65,6 +65,24 @@ Leakage check:
 python tests/test_no_leakage.py
 ```
 
+## Run — Phase 4 (models + walk-forward validation)
+
+macOS only, once (XGBoost needs the OpenMP runtime):
+
+```bash
+brew install libomp
+```
+
+```bash
+python scripts/run_pipeline.py
+```
+
+Scores 5 models x 5 assets with `TimeSeriesSplit(n_splits=5, gap=7)` plus
+two naive baselines (training-fold mean return, training-fold majority
+sign). Writes `artifacts/metrics_cv.csv` (fold-level), plots under
+`artifacts/plots/`, and `reports/phase4_cv.md`. Hyperparameters and the CV
+gap live in `config.py`.
+
 ## Out of scope (this phase)
 
-Models, walk-forward validation, API. See `CONTEXT.md`.
+Picking a winner / saving models, `predict()`, API. See `CONTEXT.md`.
