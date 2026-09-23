@@ -46,3 +46,4 @@ GBR_PARAMS = dict(n_estimators=200, learning_rate=0.05, max_depth=3,
                   subsample=0.8, random_state=RANDOM_STATE)
 
 PLOTS_DIR = ARTIFACTS_DIR / "plots"
+MODELS_DIR = ARTIFACTS_DIR / "models"  # Phase 5
