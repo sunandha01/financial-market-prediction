@@ -153,6 +153,41 @@ A failing ticker does not stop the others: the job finishes, writes
 `job_runs.status = 'error'` with the failed tickers in `message`, and exits 1.
 `.env` is gitignored.
 
+## Run — Phase 8 (FastAPI backend)
+
+Needs the Phase 7 database (migrated and filled by the jobs).
+
+```bash
+uvicorn api.main:app --reload
+```
+
+Interactive docs: http://127.0.0.1:8000/docs
+
+```bash
+curl localhost:8000/health
+curl localhost:8000/assets
+curl localhost:8000/assets/GC=F/forecast
+curl "localhost:8000/assets/GC=F/history?limit=100"
+curl localhost:8000/assets/GC=F/metrics
+curl localhost:8000/status
+```
+
+Admin routes are disabled until you set `ADMIN_TOKEN` in `.env` (any long
+random string), then send it as the `X-Admin-Token` header:
+
+```bash
+curl -X POST -H "X-Admin-Token: $ADMIN_TOKEN" localhost:8000/admin/write-forecasts
+curl -X POST -H "X-Admin-Token: $ADMIN_TOKEN" localhost:8000/admin/refresh
+```
+
+They start the existing jobs as separate processes (202, then watch
+`/status`); `POST /admin/retrain` is a 501 stub and nothing trains over HTTP.
+All routes are listed in `reports/phase8_api.md`.
+
+```bash
+python tests/test_api.py
+```
+
 ## Out of scope (this phase)
 
-API, UI, auth, deployment. See `CONTEXT.md`.
+React dashboard, login/users, deployment. See `CONTEXT.md`.
