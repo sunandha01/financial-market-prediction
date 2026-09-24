@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 7
-PHASE_NAME    = Database + nightly jobs
+CURRENT_PHASE = 8
+PHASE_NAME    = FastAPI backend
 STATUS        = built, awaiting review
 ```
 
