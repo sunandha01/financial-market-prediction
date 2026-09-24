@@ -188,6 +188,29 @@ All routes are listed in `reports/phase8_api.md`.
 python tests/test_api.py
 ```
 
+## Run — Phase 9 (React dashboard)
+
+Needs Node 20.19+ (or 22.12+) and the API running on port 8000 (Phase 8).
+
+```bash
+# terminal 1 (project root, venv active)
+uvicorn api.main:app --reload
+```
+
+```bash
+# terminal 2
+cd web
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. Pages: Markets (five cards), an asset page per
+market (forecast, price chart, model scores), Learn (8 short topics),
+Status. The site reads everything from the API; if the API is down it shows
+an error, never a number. The API URL defaults to `http://localhost:8000`
+(override with `VITE_API_URL`). Type-check and production build:
+`npm run build`. Details in `reports/phase9_ui.md`.
+
 ## Out of scope (this phase)
 
-React dashboard, login/users, deployment. See `CONTEXT.md`.
+Login/users, deployment. See `CONTEXT.md`.
