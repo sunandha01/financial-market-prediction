@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 9
-PHASE_NAME    = React dashboard
+CURRENT_PHASE = 10
+PHASE_NAME    = Authentication + protect admin
 STATUS        = built, awaiting review
 ```
 

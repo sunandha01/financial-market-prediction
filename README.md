@@ -211,6 +211,35 @@ an error, never a number. The API URL defaults to `http://localhost:8000`
 (override with `VITE_API_URL`). Type-check and production build:
 `npm run build`. Details in `reports/phase9_ui.md`.
 
+## Run — Phase 10 (admin login)
+
+Public pages (Markets, asset pages, Learn, Status) need no login. Only
+`/admin` is protected. There is one admin, identified by a secret token.
+
+1. Make a token and put it in your local `.env` (gitignored, never commit it):
+
+   ```bash
+   openssl rand -hex 24        # copy the output
+   ```
+
+   ```
+   ADMIN_TOKEN=paste-it-here
+   ```
+
+2. **Stop and restart the API** (Ctrl+C, then `uvicorn api.main:app --reload`).
+   `.env` is read once at startup, and `--reload` only watches `.py` files, so
+   saving `.env` alone does not update a running server.
+3. Open http://localhost:5173/login, paste the token, log in. `/admin` has
+   **Refresh prices** and **Write forecasts** (retrain is disabled). **Log out**
+   clears the token. Opening `/admin` while logged out sends you to `/login`.
+
+If `ADMIN_TOKEN` is empty the login page says admin routes are disabled.
+More detail in `reports/phase10_auth.md`.
+
+```bash
+python tests/test_api.py
+```
+
 ## Out of scope (this phase)
 
-Login/users, deployment. See `CONTEXT.md`.
+Deployment, HTTPS, user accounts. See `CONTEXT.md`.

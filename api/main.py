@@ -13,6 +13,7 @@ import hmac
 import os
 import subprocess
 import sys
+import time
 
 import psycopg
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
@@ -142,12 +143,27 @@ def status(conn=Depends(get_conn)):
 
 # --- admin: start existing jobs, never train ---------------------------------
 
-def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
+MAX_FAILED_ATTEMPTS = 10   # per client address, per window
+FAIL_WINDOW_SECONDS = 60
+_failures: dict[str, list[float]] = {}  # in-memory; behind a proxy every client shares one address
+
+
+def require_admin(request: Request, x_admin_token: str | None = Header(default=None)) -> None:
     expected = os.environ.get("ADMIN_TOKEN")
     if not expected:
         raise HTTPException(503, "Admin routes are disabled: ADMIN_TOKEN is not set.")
-    if not x_admin_token or not hmac.compare_digest(x_admin_token, expected):
+
+    client = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    recent = [t for t in _failures.get(client, []) if now - t < FAIL_WINDOW_SECONDS]
+    if len(recent) >= MAX_FAILED_ATTEMPTS:
+        raise HTTPException(429, "Too many failed attempts. Wait a minute and try again.")
+
+    # Compare as bytes: hmac.compare_digest raises on non-ASCII str.
+    if not x_admin_token or not hmac.compare_digest(x_admin_token.encode(), expected.encode()):
+        _failures[client] = recent + [now]
         raise HTTPException(401, "Missing or invalid X-Admin-Token header.")
+    _failures.pop(client, None)
 
 
 _running: dict[str, subprocess.Popen] = {}  # single-process guard against overlapping runs
@@ -164,6 +180,12 @@ def _start_job(module: str, *args: str) -> dict:
             [sys.executable, "-m", module, *args], cwd=BASE_DIR,
             stdout=log, stderr=subprocess.STDOUT)
     return {"started": module, "args": list(args), "check": "GET /status"}
+
+
+@app.get("/admin/check", dependencies=[Depends(require_admin)])
+def admin_check():
+    """Lets the login form verify a token without starting anything."""
+    return {"ok": True}
 
 
 @app.post("/admin/refresh", status_code=202, dependencies=[Depends(require_admin)])

@@ -11,10 +11,10 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> {
+async function request<T>(path: string, init: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_URL}${path}`, { signal });
+    res = await fetch(`${API_URL}${path}`, init);
   } catch (e) {
     if ((e as Error).name === "AbortError") throw e;
     throw new ApiError(`Can't reach the API at ${API_URL}.`);
@@ -29,6 +29,12 @@ export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> 
   }
   return res.json() as Promise<T>;
 }
+
+export const apiGet = <T,>(path: string, signal?: AbortSignal) => request<T>(path, { signal });
+
+/** Admin calls: the token goes in the X-Admin-Token header (Phase 8). */
+export const apiAdmin = <T,>(method: "GET" | "POST", path: string, token: string) =>
+  request<T>(path, { method, headers: { "X-Admin-Token": token } });
 
 export function useApi<T>(path: string) {
   const [state, setState] = useState<{ data?: T; error?: ApiError; loading: boolean }>({ loading: true });
