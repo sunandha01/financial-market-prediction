@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-linear-to-br from-indigo-50 via-white to-fuchsia-50 text-slate-800 antialiased;
+  min-height: 100vh;
+}

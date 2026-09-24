@@ -5,3 +5,5 @@ data/*.csv
 artifacts/*
 !artifacts/.gitkeep
 .env
+web/node_modules/
+web/dist/
