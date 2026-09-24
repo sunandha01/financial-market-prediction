@@ -122,6 +122,37 @@ Checks:
 python tests/test_predict.py
 ```
 
+## Run — Phase 7 (Postgres + jobs)
+
+Needs Postgres running locally (`brew services start postgresql@18`), the
+Phase 5 artefacts and the `data/` cache. One-time setup:
+
+```bash
+createdb market_predict
+cp .env.example .env          # DATABASE_URL, edit if your setup differs
+python scripts/migrate.py     # creates ohlcv, forecasts, model_runs, job_runs
+```
+
+Jobs (CLI only, safe to re-run, never retrain):
+
+```bash
+python -m jobs.refresh_prices            # upsert OHLCV from the data/ cache
+python -m jobs.refresh_prices --force    # re-download from Yahoo first
+python -m jobs.write_forecasts           # predict() x5 -> forecasts (no Yahoo)
+python -m jobs.record_model_runs         # optional: log the Phase 5 winners
+```
+
+Check it:
+
+```bash
+psql -d market_predict -c "select ticker, as_of, pred_return_7d, direction, model_name from forecasts order by ticker;"
+python tests/test_jobs.py                # failure + no-duplicate checks (scratch schema)
+```
+
+A failing ticker does not stop the others: the job finishes, writes
+`job_runs.status = 'error'` with the failed tickers in `message`, and exits 1.
+`.env` is gitignored.
+
 ## Out of scope (this phase)
 
-Database, jobs, API, UI. See `CONTEXT.md`.
+API, UI, auth, deployment. See `CONTEXT.md`.

@@ -18,8 +18,8 @@ Rules:
 ## CURRENT_PHASE
 
 ```
-CURRENT_PHASE = 6
-PHASE_NAME    = Inference function
+CURRENT_PHASE = 7
+PHASE_NAME    = Database + nightly jobs
 STATUS        = built, awaiting review
 ```
 
