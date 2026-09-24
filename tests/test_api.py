@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fastapi.testclient import TestClient
 
+from api import main
 from api.main import app
 from config import BASE_DIR, TICKERS
 from src.db import get_connection
@@ -59,6 +60,7 @@ def test_metrics_status_and_unknown_ticker():
 
 
 def test_admin_auth_and_retrain_stub():
+    main._failures.clear()
     os.environ["ADMIN_TOKEN"] = "test-token"
     for path in ("/admin/refresh", "/admin/write-forecasts", "/admin/retrain"):
         assert client.post(path).status_code == 401
@@ -66,6 +68,26 @@ def test_admin_auth_and_retrain_stub():
     assert client.post("/admin/retrain", headers={"X-Admin-Token": "test-token"}).status_code == 501
     del os.environ["ADMIN_TOKEN"]
     assert client.post("/admin/retrain", headers={"X-Admin-Token": "x"}).status_code == 503
+
+
+def test_admin_check_bad_header_and_throttle():
+    main._failures.clear()
+    os.environ["ADMIN_TOKEN"] = "test-token"
+    try:
+        assert client.get("/admin/check").status_code == 401
+        assert client.get("/admin/check", headers={"X-Admin-Token": "wrong"}).status_code == 401
+        assert client.get("/admin/check", headers={"X-Admin-Token": "test-token"}).json() == {"ok": True}
+        # A non-ASCII header must be a clean 401, not a 500.
+        assert client.get("/admin/check", headers={"X-Admin-Token": "caf\xe9".encode("latin-1")}).status_code == 401
+        # Too many wrong guesses -> 429, even for the right token, until the window passes.
+        main._failures.clear()
+        for _ in range(main.MAX_FAILED_ATTEMPTS):
+            assert client.get("/admin/check", headers={"X-Admin-Token": "nope"}).status_code == 401
+        assert client.get("/admin/check", headers={"X-Admin-Token": "nope"}).status_code == 429
+        assert client.get("/admin/check", headers={"X-Admin-Token": "test-token"}).status_code == 429
+    finally:
+        main._failures.clear()
+        del os.environ["ADMIN_TOKEN"]
 
 
 def test_empty_forecasts_table_gives_404():
@@ -96,5 +118,6 @@ if __name__ == "__main__":
     test_history_is_capped_and_ascending()
     test_metrics_status_and_unknown_ticker()
     test_admin_auth_and_retrain_stub()
+    test_admin_check_bad_header_and_throttle()
     test_empty_forecasts_table_gives_404()
     print("All Phase 8 API checks passed.")

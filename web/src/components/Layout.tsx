@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../auth";
 
 const nav = [
   { to: "/", label: "Markets", end: true },
@@ -7,6 +8,8 @@ const nav = [
 ];
 
 export default function Layout() {
+  const { token } = useAuth();
+  const links = token ? [...nav, { to: "/admin", label: "Admin" }] : [...nav, { to: "/login", label: "Log in" }];
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b border-indigo-100 bg-white/85 backdrop-blur">
@@ -20,7 +23,7 @@ export default function Layout() {
             </span>
           </Link>
           <nav className="flex gap-1">
-            {nav.map((n) => (
+            {links.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
