@@ -240,6 +240,4 @@ More detail in `reports/phase10_auth.md`.
 python tests/test_api.py
 ```
 
-## Out of scope (this phase)
 
-Deployment, HTTPS, user accounts. See `CONTEXT.md`.
